@@ -1,13 +1,19 @@
 "use client";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState,useEffect,useActionState } from "react";
+import { searchFormHandler } from "@/utils/serverActions";
+import { useJobStore } from "@/context/jobContext";
+import Filters from "@/components/job/Filters";
 
 type Props = {};
 
 const page = (props: Props) => {
+
   const [searchData, setSearchData] = useState({
     jobTitle: '',
     jobLocation: ''
   });
+  const [state,formAction] = useActionState(searchFormHandler,{message: null,error: null})
+  const {setNewJobResults,jobs} = useJobStore()
 
   const inputChangeHandler = (event:ChangeEvent<HTMLInputElement>) => {
     const {name,value} = event.target
@@ -16,11 +22,26 @@ const page = (props: Props) => {
       [name]:value
     }))
   }
+  const handleKeyDownSubmission = (e: React.KeyboardEvent<HTMLFormElement>) => {    
+    if  (e.key === 'Enter' || e.key === 'NumpadEnter')
+     {
+      console.log('why')
+      e.preventDefault()
+      e.currentTarget.requestSubmit()
+    }
+  }
+  useEffect(() => {
+    if(!state.error){
+      setNewJobResults(state.message)
+    }
+  }, [state])
+  
+  
   return (
     <main className="mx-2 h-full">
-      <form className="flex justify-center w-full" action="">
+      <form className="flex justify-center w-full" action={formAction} onKeyDown={handleKeyDownSubmission}>
         <div className="flex flex-col border border-[var(--currentColor)] rounded-lg lg:border-0 lg:flex-row gap-1 p-1 w-[80%] lg:w-[60%] ">
-          <label className="input focus-within:outline-none focus-within:border-0 lg:focus-within:border-1 lg:input-bordered grow flex items-center gap-2 rounded-l-full  ">
+          <label className="input focus-within:outline-none focus-within:border-0 lg:focus-within:border lg:input-bordered grow flex items-center gap-2 rounded-l-full  ">
             <svg
               viewBox="0 0 24 24"
               className="h-6 w-6"
@@ -54,7 +75,7 @@ const page = (props: Props) => {
             <input type="text" name="jobTitle" placeholder="Job Title" value={searchData.jobTitle} onChange={inputChangeHandler} />
           </label>
           <hr className="lg:hidden border-t-[var(--currentColor)]"></hr>
-          <label className="input focus-within:outline-none focus-within:border-0 lg:focus-within:border-1  lg:input-bordered flex items-center grow gap-2 rounded-r-full">
+          <label className="input focus-within:outline-none focus-within:border-0 lg:focus-within:border  lg:input-bordered flex items-center grow gap-2 rounded-r-full">
             <svg
               viewBox="0 0 24 24"
               className="w-6 h-6"
@@ -88,7 +109,15 @@ const page = (props: Props) => {
             <input type="text" name="jobLocation"  placeholder="Location" value={searchData.jobLocation} onChange={inputChangeHandler}/>
           </label>
         </div>
+        
       </form>
+      {jobs && <Filters />}
+      <div>
+        {
+          state?.error
+        }
+      </div>
+
     </main>
   );
 };
