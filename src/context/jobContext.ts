@@ -9,6 +9,6 @@ interface JobState {
 }
 
 export const useJobStore = create<JobState>()((set) => ({
-  jobs: [],
+  jobs: undefined,
   setNewJobResults: (jobResults: any) => set(state => ({ jobs: jobResults}))
 }));
