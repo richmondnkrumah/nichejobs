@@ -28,11 +28,9 @@ export const searchFormHandler = async (prevState:any,formData: FormData) => {
   await axios
     .request(urlConfig)
     .then((response) => {
-      // console.log(JSON.stringify(response.data));
-      responseData = JSON.stringify(response.data);
+      responseData = response.data.results
     })
     .catch((error) => {
-      // console.log(error);
       responseError = error;
     });
   return{message: responseData, error: responseError};
