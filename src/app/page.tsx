@@ -6,15 +6,17 @@ import Filters from "@/components/job/Filters";
 import JobList from "@/components/job/JobList";
 import JobDetail from "@/components/job/JobDetail";
 import { JOB } from "@/types/job";
+import { useRouter } from "next/navigation";
 
 type Props = {};
 
 const HomePage = (props: Props) => {
+  const router = useRouter();
   const [searchData, setSearchData] = useState({
     jobTitle: "",
     jobLocation: "",
   });
-  const [activeJob,setActiveJob] = useState<undefined | JOB>(undefined)
+  const [activeJob, setActiveJob] = useState<undefined | JOB>(undefined);
   const [state, formAction] = useActionState(searchFormHandler, {
     message: null,
     error: null,
@@ -37,14 +39,19 @@ const HomePage = (props: Props) => {
   useEffect(() => {
     if (!state.error) {
       setNewJobResults(state.message);
-      setActiveJob(state.message != null ? state.message[0]: undefined)
+      window.innerWidth > 768 &&
+        setActiveJob(state.message != null ? state.message[0] : undefined);
     }
   }, [state]);
 
   const setActiveJobHandler = (id: string) => {
-    setActiveJob(jobs?.find(currJob => currJob.id === id))
-  }
-  console.log(jobs,"this is the jobs ")
+    if (window.innerWidth <= 768) {
+      router.push(`/jobs/${id}`);
+    } else {
+      setActiveJob(jobs?.find((currJob) => currJob.id === id));
+    }
+  };
+  console.log(jobs, "this is the jobs ");
   return (
     <main className=" h-full mx-3 grow">
       <form
@@ -90,6 +97,8 @@ const HomePage = (props: Props) => {
               placeholder="Job Title"
               value={searchData.jobTitle}
               onChange={inputChangeHandler}
+              className="w-fit"
+              
             />
           </label>
           <hr className="lg:hidden border-t-[var(--currentColor)]"></hr>
@@ -130,17 +139,19 @@ const HomePage = (props: Props) => {
               placeholder="Location"
               value={searchData.jobLocation}
               onChange={inputChangeHandler}
+              className="w-fit"
+            
             />
           </label>
         </div>
       </form>
       <div>{state?.error}</div>
       {jobs && (
-        <section className="flex flex-col mx-36">
+        <section className="flex flex-col w-[90%] mx-auto">
           <Filters />
           <div className="flex gap-5 justify-between">
-            <JobList jobResults={jobs} activeJobHandler={setActiveJobHandler}/>
-            <JobDetail ActiveJob={activeJob}/>
+            <JobList jobResults={jobs} activeJobHandler={setActiveJobHandler} />
+            <JobDetail isModal={true}  ActiveJob={activeJob} />
           </div>
         </section>
       )}
