@@ -4,14 +4,17 @@ import { searchFormHandler } from "@/utils/serverActions";
 import { useJobStore } from "@/context/jobContext";
 import Filters from "@/components/job/Filters";
 import JobList from "@/components/job/JobList";
+import JobDetail from "@/components/job/JobDetail";
+import { JOB } from "@/types/job";
 
 type Props = {};
 
-const page = (props: Props) => {
+const HomePage = (props: Props) => {
   const [searchData, setSearchData] = useState({
     jobTitle: "",
     jobLocation: "",
   });
+  const [activeJob,setActiveJob] = useState<undefined | JOB>(undefined)
   const [state, formAction] = useActionState(searchFormHandler, {
     message: null,
     error: null,
@@ -34,10 +37,16 @@ const page = (props: Props) => {
   useEffect(() => {
     if (!state.error) {
       setNewJobResults(state.message);
+      setActiveJob(state.message != null ? state.message[0]: undefined)
     }
   }, [state]);
+
+  const setActiveJobHandler = (id: string) => {
+    setActiveJob(jobs?.find(currJob => currJob.id === id))
+  }
+  console.log(jobs,"this is the jobs ")
   return (
-    <main className="mx-2 h-full">
+    <main className=" h-full mx-3 grow">
       <form
         className="flex justify-center w-full"
         action={formAction}
@@ -125,10 +134,18 @@ const page = (props: Props) => {
           </label>
         </div>
       </form>
-      {jobs && <Filters />}
-      <div>{state?.error}</div> 
+      <div>{state?.error}</div>
+      {jobs && (
+        <section className="flex flex-col mx-36">
+          <Filters />
+          <div className="flex gap-5 justify-between">
+            <JobList jobResults={jobs} activeJobHandler={setActiveJobHandler}/>
+            <JobDetail ActiveJob={activeJob}/>
+          </div>
+        </section>
+      )}
     </main>
   );
 };
 
-export default page;
+export default HomePage;
