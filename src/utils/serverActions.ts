@@ -31,7 +31,8 @@ export const searchFormHandler = async (prevState:any,formData: FormData) => {
       responseData = response.data.results
     })
     .catch((error) => {
+      
       responseError = error;
     });
-  return{message: responseData, error: responseError};
+  return {message: responseData, error: responseError};
 };
