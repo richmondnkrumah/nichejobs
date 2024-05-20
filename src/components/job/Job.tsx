@@ -9,7 +9,7 @@ type Props = {
 
 const Job = ({ jobData,activeJobHandler }: Props) => {
   return (
-    <div onClick={() => activeJobHandler(jobData.id)} className="card cursor-pointer w-96 border border-opacity-[10%]  border-[var(--currentColor)] card-compact p-3">
+    <div onClick={() => activeJobHandler(jobData.id)} className="card cursor-pointer min-w-fit border border-opacity-[10%]  border-[var(--currentColor)] card-compact p-3">
       <div className="card-title  justify-between">
         <span>{jobData.role}</span>
         <div className="btn btn-ghost ">
