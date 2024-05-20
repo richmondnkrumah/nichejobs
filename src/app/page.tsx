@@ -1,45 +1,48 @@
 "use client";
-import { ChangeEvent, useState,useEffect,useActionState } from "react";
+import { ChangeEvent, useState, useEffect, useActionState } from "react";
 import { searchFormHandler } from "@/utils/serverActions";
 import { useJobStore } from "@/context/jobContext";
 import Filters from "@/components/job/Filters";
+import JobList from "@/components/job/JobList";
 
 type Props = {};
 
 const page = (props: Props) => {
-
   const [searchData, setSearchData] = useState({
-    jobTitle: '',
-    jobLocation: ''
+    jobTitle: "",
+    jobLocation: "",
   });
-  const [state,formAction] = useActionState(searchFormHandler,{message: null,error: null})
-  const {setNewJobResults,jobs} = useJobStore()
+  const [state, formAction] = useActionState(searchFormHandler, {
+    message: null,
+    error: null,
+  });
+  const { setNewJobResults, jobs } = useJobStore();
 
-  const inputChangeHandler = (event:ChangeEvent<HTMLInputElement>) => {
-    const {name,value} = event.target
-    setSearchData(prevData => ({
+  const inputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setSearchData((prevData) => ({
       ...prevData,
-      [name]:value
-    }))
-  }
-  const handleKeyDownSubmission = (e: React.KeyboardEvent<HTMLFormElement>) => {    
-    if  (e.key === 'Enter' || e.key === 'NumpadEnter')
-     {
-      console.log('why')
-      e.preventDefault()
-      e.currentTarget.requestSubmit()
+      [name]: value,
+    }));
+  };
+  const handleKeyDownSubmission = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === "Enter" || e.key === "NumpadEnter") {
+      e.preventDefault();
+      e.currentTarget.requestSubmit();
     }
-  }
+  };
   useEffect(() => {
-    if(!state.error){
-      setNewJobResults(state.message)
+    if (!state.error) {
+      setNewJobResults(state.message);
     }
-  }, [state])
-  
-  
+  }, [state]);
   return (
     <main className="mx-2 h-full">
-      <form className="flex justify-center w-full" action={formAction} onKeyDown={handleKeyDownSubmission}>
+      <form
+        className="flex justify-center w-full"
+        action={formAction}
+        onKeyDown={handleKeyDownSubmission}
+      >
         <div className="flex flex-col border border-[var(--currentColor)] rounded-lg lg:border-0 lg:flex-row gap-1 p-1 w-[80%] lg:w-[60%] ">
           <label className="input focus-within:outline-none focus-within:border-0 lg:focus-within:border lg:input-bordered grow flex items-center gap-2 rounded-l-full  ">
             <svg
@@ -72,7 +75,13 @@ const page = (props: Props) => {
                 ></path>{" "}
               </g>
             </svg>
-            <input type="text" name="jobTitle" placeholder="Job Title" value={searchData.jobTitle} onChange={inputChangeHandler} />
+            <input
+              type="text"
+              name="jobTitle"
+              placeholder="Job Title"
+              value={searchData.jobTitle}
+              onChange={inputChangeHandler}
+            />
           </label>
           <hr className="lg:hidden border-t-[var(--currentColor)]"></hr>
           <label className="input focus-within:outline-none focus-within:border-0 lg:focus-within:border  lg:input-bordered flex items-center grow gap-2 rounded-r-full">
@@ -106,18 +115,18 @@ const page = (props: Props) => {
                 ></path>{" "}
               </g>
             </svg>
-            <input type="text" name="jobLocation"  placeholder="Location" value={searchData.jobLocation} onChange={inputChangeHandler}/>
+            <input
+              type="text"
+              name="jobLocation"
+              placeholder="Location"
+              value={searchData.jobLocation}
+              onChange={inputChangeHandler}
+            />
           </label>
         </div>
-        
       </form>
       {jobs && <Filters />}
-      <div>
-        {
-          state?.error
-        }
-      </div>
-
+      <div>{state?.error}</div> 
     </main>
   );
 };
